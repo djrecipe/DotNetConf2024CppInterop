@@ -11,8 +11,17 @@ namespace ConsoleApp
     {
         [DllImport("InteropExample.dll")]
         public static extern int Add(int left, int right);
+
         [DllImport("InteropExample.dll")]
-        public static extern int MyMangledName(int left, int right);
+        public static extern int MyMangledName();
+
+        [DllImport("InteropExample.dll",
+            CallingConvention = CallingConvention.Cdecl)]
+        public static extern int MYcdecl();
+
+        [DllImport("InteropExample.dll",
+            CallingConvention = CallingConvention.StdCall)]
+        public static extern int MYstdcall();
     }
 
     internal abstract class Interop
