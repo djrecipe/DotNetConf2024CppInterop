@@ -64,7 +64,8 @@ namespace ConsoleApp
             internal delegate int AddStructValues(IntPtr ptr);
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
             internal delegate int AddStructValuesCustomMarshaller(
-                [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(MyDataMarshaller))]
+                [MarshalAs(UnmanagedType.CustomMarshaler,
+                    MarshalTypeRef = typeof(MyDataMarshaller))]
                 MyDataClass data);
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
             internal delegate void ThrowUnhandledException();
