@@ -15,5 +15,7 @@ Console.WriteLine($"Concatenate 'foo' and 'bar': {Interop.ConcatStrings("foo", "
 // invoke unicode string concatenation
 Console.OutputEncoding = Encoding.UTF8;
 Console.WriteLine($"Concatenate 'ดดดด' and 'ๆๆๆๆ': {Interop.ConcatWideStrings("ดดดด", "ๆๆๆๆ")}");
+// invoke interop using struct
+Console.WriteLine($"Add several values using struct marshalling: {Interop.AddValues(1, 100.0, new []{10, 10, 10})}");
 // invoke mangled method
 Console.WriteLine($"Invoking mangled method name: {Interop.MyMangledName()}");

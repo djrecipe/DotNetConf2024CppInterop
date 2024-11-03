@@ -9,6 +9,14 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ConsoleApp
 {
+    [StructLayout(LayoutKind.Sequential)]
+    struct MyData
+    {
+        public int Value1;
+        public double Value2;
+        public int ArrayCount;
+        public IntPtr ArrayValues;
+    };
     internal abstract class BasicInterop
     {
         [DllImport("InteropExample.dll")]
@@ -49,6 +57,8 @@ namespace ConsoleApp
             internal delegate int DeleteArray(IntPtr ptr);
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
             internal delegate int MyMangledName();
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            internal delegate int AddStructValues(IntPtr ptr);
         }
 
         private static IntPtr library;
@@ -95,40 +105,41 @@ namespace ConsoleApp
 
         public static string ConcatWideStrings(string left, string right)
         {
+            // load function
             IntPtr func = NativeLibrary.GetExport(library, "ConcatWideStrings");
-
             ConcatWideStrings method = (ConcatWideStrings)Marshal.GetDelegateForFunctionPointer(
                 func,
                 typeof(ConcatWideStrings));
             
+            // get null-terminated bytes
             byte[] left_bytes = Encoding.UTF8.GetBytes($"{left}\0");
             byte[] right_bytes = Encoding.UTF8.GetBytes($"{right}\0");
 
+            // copy bytes to unmanaged memory
             int left_size = left_bytes.Length;
             IntPtr left_ptr = Marshal.AllocHGlobal(left_size);
             Marshal.Copy(left_bytes, 0, left_ptr, left_bytes.Length);
-
+            // copy bytes to unmanaged memory
             int right_size = right_bytes.Length;
             IntPtr right_ptr = Marshal.AllocHGlobal(right_size);
             Marshal.Copy(right_bytes, 0, right_ptr, right_bytes.Length);
 
+            // invoke method
             IntPtr result_ptr = IntPtr.Zero;
             int count = method(left_ptr, right_ptr, out result_ptr);
 
+            // free parameters
             Marshal.FreeHGlobal(left_ptr);
             Marshal.FreeHGlobal(right_ptr);
             
+            // get result string
             string result_str = "";
             byte[] bytes = new byte[count];
             Marshal.Copy(result_ptr, bytes, 0, count);
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
                 result_str = Encoding.Unicode.GetString(bytes);
-            }
             else
-            {
                 result_str = Encoding.UTF32.GetString(bytes);
-            }
             DeleteArray(result_ptr); // don't forget to release unmanaged memory
 
             return result_str;
@@ -145,6 +156,36 @@ namespace ConsoleApp
                 typeof(MyMangledName));
 
             int result = method();
+            return result;
+        }
+
+        public unsafe static int AddValues(int value1, double value2, int[] more_values)
+        {
+            IntPtr func = NativeLibrary.GetExport(library, "AddStructValues");
+            if (func == IntPtr.Zero)
+                throw new Exception("Failed to find function with name 'MyMangledName'");
+
+            AddStructValues method = (AddStructValues)Marshal.GetDelegateForFunctionPointer(
+                func,
+                typeof(AddStructValues));
+
+            MyData struct_data;
+            struct_data.Value1 = value1;
+            struct_data.Value2 = value2;
+            struct_data.ArrayCount = more_values.Length;
+            struct_data.ArrayValues = Marshal.AllocHGlobal(sizeof(int) * more_values.Length);
+            Marshal.Copy(more_values, 0, struct_data.ArrayValues, struct_data.ArrayCount);
+
+            IntPtr struct_ptr = Marshal.AllocHGlobal(sizeof(MyData));
+            Marshal.StructureToPtr<MyData>(struct_data, struct_ptr, false);
+            
+            // invoke method
+            int result = method(struct_ptr);
+
+            // free memory
+            Marshal.FreeHGlobal(struct_data.ArrayValues);
+            Marshal.FreeHGlobal(struct_ptr);
+
             return result;
         }
     }

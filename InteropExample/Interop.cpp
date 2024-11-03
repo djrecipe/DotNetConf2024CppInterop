@@ -53,9 +53,13 @@ void ThrowUnhandledException()
 {
     throw std::runtime_error("unhandled exception!");
 }
-int MarshalStruct(MyData* data)
+int AddStructValues(void* ptr)
 {
-    return sizeof(data);
+    MyData* data = (MyData*)ptr;
+    int result = data->Value1 + data->Value2;
+    for (int i = 0; i < data->ArrayCount; i++)
+        result += data->ArrayValues[i];
+    return result;
 }
 int MYcdecl()
 {

@@ -24,6 +24,7 @@ __declspec(dllexport)
 int ConcatStrings(const char* left, const char* right,
     void*& output);
 __declspec(dllexport) int ConcatWideStrings(const char* left, const char* right, void*& output);
+__declspec(dllexport) int AddStructValues(void* data);
 __declspec(dllexport) int DeleteArray(void* ptr);
 __declspec(dllexport) int  __cdecl MYcdecl();
 __declspec(dllexport)
@@ -31,7 +32,6 @@ int  __stdcall MYstdcall();
 
 // these methods will not be exported, unless declared in a .def file
 void ThrowUnhandledException();
-int MarshalStruct(MyData* data);
 
 } // end of "extern c"
 
