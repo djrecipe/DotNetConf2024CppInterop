@@ -238,12 +238,10 @@ namespace ConsoleApp
         public static int AddValues(MyDataClass data)
         {
             IntPtr func = NativeLibrary.GetExport(library, "AddStructValues");
-            if (func == IntPtr.Zero)
-                throw new Exception("Failed to find function with name 'MyMangledName'");
 
-            AddStructValuesCustomMarshaller method = (AddStructValuesCustomMarshaller)Marshal.GetDelegateForFunctionPointer(
-                func,
-                typeof(AddStructValuesCustomMarshaller));
+            AddStructValuesCustomMarshaller method = (AddStructValuesCustomMarshaller)
+                Marshal.GetDelegateForFunctionPointer(
+                func, typeof(AddStructValuesCustomMarshaller));
 
             return method(data);
         }
