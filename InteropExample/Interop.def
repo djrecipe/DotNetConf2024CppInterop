@@ -6,3 +6,5 @@ EXPORTS
     MYcdecl                                 @4
     MYstdcall                               @5
     MyMangledName                           @6
+    ConcatStrings                           @7
+    ConcatWideStrings                       @8

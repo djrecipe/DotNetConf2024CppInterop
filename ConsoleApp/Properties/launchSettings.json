@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "ConsoleApp": {
+      "commandName": "Project",
+      "nativeDebugging": true,
+      "hotReloadEnabled": false
+    }
+  }
+}
