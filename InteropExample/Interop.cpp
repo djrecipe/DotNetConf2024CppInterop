@@ -16,7 +16,7 @@ int Add(int left, int right)
 {
     return left + right;
 }
-int ConcatStrings(char* left, char* right, void*& output)
+int ConcatStrings(const char* left, const char* right, void*& output)
 {
     std::ostringstream stream;
     stream << left << right;
@@ -27,7 +27,7 @@ int ConcatStrings(char* left, char* right, void*& output)
     ((char*)output)[length] = '\0';
     return length + 1;
 }
-int ConcatWideStrings(char* left, char* right, void*& output)
+int ConcatWideStrings(const char* left, const char* right, void*& output)
 {
     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 
@@ -36,13 +36,13 @@ int ConcatWideStrings(char* left, char* right, void*& output)
     std::wstring right_wstr = converter.from_bytes(right);
 
     std::wstringstream stream;
-    stream << left << right;
+    stream << left_wstr.c_str() << right_wstr.c_str();
     std::wstring concat = stream.str();
     auto length = wcslen(concat.c_str());
     output = new wchar_t[length + 1];
     wcscpy((wchar_t*)output, concat.c_str());
     ((wchar_t*)output)[length] = L'\0';
-    return length + 1;
+    return (length + 1) * sizeof(wchar_t);
 }
 int DeleteArray(void* ptr)
 {
