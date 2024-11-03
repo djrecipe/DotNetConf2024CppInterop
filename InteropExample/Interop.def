@@ -2,6 +2,7 @@ LIBRARY InteropExample
 EXPORTS
     Add                                     @1
     ThrowUnhandledException                 @2
+    ThrowCaughtException                    @3
     MYcdecl                                 @4
     MYstdcall                               @5
     MyMangledName                           @6
@@ -9,3 +10,4 @@ EXPORTS
     ConcatWideStrings                       @8
     DeleteArray                             @9
     AddStructValues                         @10
+    DeleteStruct                            @11

@@ -17,5 +17,14 @@ Console.OutputEncoding = Encoding.UTF8;
 Console.WriteLine($"Concatenate 'ดดดด' and 'ๆๆๆๆ': {Interop.ConcatWideStrings("ดดดด", "ๆๆๆๆ")}");
 // invoke interop using struct
 Console.WriteLine($"Add several values using struct marshalling: {Interop.AddValues(1, 100.0, new []{10, 10, 10})}");
+MyDataClass data = new MyDataClass();
+data.Value1 = 1;
+data.Value2 = 100.0;
+data.MoreValues = new[] { 10, 10, 10 };
+Console.WriteLine($"Add several values using ICustomMarshaller: {Interop.AddValues(data)}");
 // invoke mangled method
 Console.WriteLine($"Invoking mangled method name: {Interop.MyMangledName()}");
+
+// throw unhandled exception
+//Interop.ThrowUnhandledException();
+//Interop.ThrowCaughtException();

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.Marshalling;
 using System.Text;
 using System.Threading.Tasks;
 using static ConsoleApp.Interop.Delegates;
@@ -56,9 +57,19 @@ namespace ConsoleApp
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
             internal delegate int DeleteArray(IntPtr ptr);
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            internal delegate int DeleteStruct(IntPtr ptr);
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
             internal delegate int MyMangledName();
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
             internal delegate int AddStructValues(IntPtr ptr);
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            internal delegate int AddStructValuesCustomMarshaller(
+                [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(MyDataMarshaller))]
+                MyDataClass data);
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            internal delegate void ThrowUnhandledException();
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            internal delegate int ThrowCaughtException();
         }
 
         private static IntPtr library;
@@ -75,13 +86,24 @@ namespace ConsoleApp
             return method(left, right);
         }
 
-        private static int DeleteArray(IntPtr ptr)
+        internal static int DeleteArray(IntPtr ptr)
         {
             IntPtr func = NativeLibrary.GetExport(library, "DeleteArray");
 
             DeleteArray method = (DeleteArray)Marshal.GetDelegateForFunctionPointer(
                 func,
                 typeof(DeleteArray));
+
+            return method(ptr);
+        }
+
+        internal static int DeleteStruct(IntPtr ptr)
+        {
+            IntPtr func = NativeLibrary.GetExport(library, "DeleteStruct");
+
+            DeleteStruct method = (DeleteStruct)Marshal.GetDelegateForFunctionPointer(
+                func,
+                typeof(DeleteStruct));
 
             return method(ptr);
         }
@@ -159,6 +181,30 @@ namespace ConsoleApp
             return result;
         }
 
+        public static void ThrowUnhandledException()
+        {
+            IntPtr func = NativeLibrary.GetExport(library, "ThrowUnhandledException");
+
+            ThrowUnhandledException method = (ThrowUnhandledException)Marshal.GetDelegateForFunctionPointer(
+                func,
+                typeof(ThrowUnhandledException));
+
+            method();
+        }
+
+        public static void ThrowCaughtException()
+        {
+            IntPtr func = NativeLibrary.GetExport(library, "ThrowCaughtException");
+
+            ThrowCaughtException throwcaughtexception = (ThrowCaughtException)Marshal.GetDelegateForFunctionPointer(
+                func,
+                typeof(ThrowCaughtException));
+
+            int result = throwcaughtexception();
+            if (result < 0)
+                throw new Exception("Native exception!");
+        }
+
         public unsafe static int AddValues(int value1, double value2, int[] more_values)
         {
             IntPtr func = NativeLibrary.GetExport(library, "AddStructValues");
@@ -187,6 +233,19 @@ namespace ConsoleApp
             Marshal.FreeHGlobal(struct_ptr);
 
             return result;
+        }
+
+        public static int AddValues(MyDataClass data)
+        {
+            IntPtr func = NativeLibrary.GetExport(library, "AddStructValues");
+            if (func == IntPtr.Zero)
+                throw new Exception("Failed to find function with name 'MyMangledName'");
+
+            AddStructValuesCustomMarshaller method = (AddStructValuesCustomMarshaller)Marshal.GetDelegateForFunctionPointer(
+                func,
+                typeof(AddStructValuesCustomMarshaller));
+
+            return method(data);
         }
     }
 }

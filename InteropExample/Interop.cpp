@@ -49,9 +49,28 @@ int DeleteArray(void* ptr)
     delete[] ptr;
     return 1;
 }
+int DeleteStruct(void* ptr)
+{
+    delete (MyData*)ptr;
+    return 1;
+}
 void ThrowUnhandledException()
 {
     throw std::runtime_error("unhandled exception!");
+}
+int ThrowCaughtException()
+{
+    int result = 0;
+    try
+    {
+        result = 1;
+        throw std::runtime_error("unhandled exception!");
+    }
+    catch (const std::exception& ex)
+    {
+        result = -1;
+    }
+    return result;
 }
 int AddStructValues(void* ptr)
 {
