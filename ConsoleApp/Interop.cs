@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using static ConsoleApp.Interop.Delegates;
 
 namespace ConsoleApp
 {
@@ -24,6 +25,7 @@ namespace ConsoleApp
         public static extern int MYstdcall();
     }
 
+    // advantages: better path resolution, potentially faster runtime
     internal abstract class Interop
     {
         internal abstract class Delegates
@@ -33,14 +35,20 @@ namespace ConsoleApp
         }
 
         private static IntPtr library;
-        public static void Initialize(IntPtr lib)
+        public static void Initialize(string path)
         {
-            library = lib;
+            library = NativeLibrary.Load(path);
         }
 
         public static int Add(int left, int right)
         {
-            return 0;
+            IntPtr pAddressOfFunctionToCall = NativeLibrary.GetExport(library, "Add");
+
+            Add method = (Add)Marshal.GetDelegateForFunctionPointer(
+                pAddressOfFunctionToCall,
+                typeof(Add));
+
+            return method(left, right);
         }
     }
 }
