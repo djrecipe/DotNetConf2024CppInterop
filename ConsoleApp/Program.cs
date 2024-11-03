@@ -5,9 +5,11 @@
 // concat strings (using DllImport attribute)
 
 // add (using NativeLibrary class)
+// load library
 Interop.Initialize("InteropExample.dll");
-Console.WriteLine($"Add using NativeLibrary class: {Interop.Add(5, 5)}");
-Console.WriteLine($"Concatenate 'foo' and 'bar' using NativeLibrary class: {Interop.ConcatStrings("foo", "bar")}");
-
-// invoke mangled name (using DllImport attribute)
-//Console.WriteLine($"Invoking mangled name using DllImport attribute: {BasicInterop.MyMangledName()}");
+// invoke add method
+Console.WriteLine($"Add 5 + 5: {Interop.Add(5, 5)}");
+// invoke string concatenation
+Console.WriteLine($"Concatenate 'foo' and 'bar': {Interop.ConcatStrings("foo", "bar")}");
+// invoke mangled method
+Console.WriteLine($"Invoking mangled method name: {Interop.MyMangledName()}");

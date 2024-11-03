@@ -44,6 +44,11 @@ int ConcatWideStrings(char* left, char* right, void*& output)
     ((wchar_t*)output)[length] = L'\0';
     return length + 1;
 }
+int DeleteArray(void* ptr)
+{
+    delete[] ptr;
+    return 1;
+}
 void ThrowUnhandledException()
 {
     throw std::runtime_error("unhandled exception!");
@@ -63,7 +68,7 @@ int MYstdcall()
 }
 int MyMangledName()
 {
-    return -4;
+    return 1;
 }
 }
 }

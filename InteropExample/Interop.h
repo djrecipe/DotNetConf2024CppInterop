@@ -20,8 +20,11 @@ struct MyData
 
 // these methods will be exported because they have the export attribute
 __declspec(dllexport) int Add(int left, int right);
-__declspec(dllexport) int ConcatStrings(char* left, char* right, void*& output);
+__declspec(dllexport)
+int ConcatStrings(char* left, char* right,
+    void*& output);
 __declspec(dllexport) int ConcatWideStrings(char* left, char* right, void*& output);
+__declspec(dllexport) int DeleteArray(void* ptr);
 __declspec(dllexport) int  __cdecl MYcdecl();
 __declspec(dllexport)
 int  __stdcall MYstdcall();

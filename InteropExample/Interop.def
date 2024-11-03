@@ -8,3 +8,4 @@ EXPORTS
     MyMangledName                           @6
     ConcatStrings                           @7
     ConcatWideStrings                       @8
+    DeleteArray                             @9
